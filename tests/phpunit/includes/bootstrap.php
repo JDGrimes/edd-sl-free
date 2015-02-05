@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-if( ! getenv( 'WP_TESTS_DIR' ) ) {
+if ( ! getenv( 'WP_TESTS_DIR' ) ) {
 	exit( 'WP_TESTS_DIR is not set.' . PHP_EOL );
 }
 
