@@ -143,6 +143,16 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that it does nothing if given an invalid item_id.
+	 *
+	 * @since 1.0.0
+	 */
+	public function test_invalid_item_id() {
+
+		$this->assertNull( $this->simulate_request( array( 'item_id' => 34 ) ) );
+	}
+
+	/**
 	 * Test that it does nothing if it isn't a free download.
 	 *
 	 * @since 1.0.0

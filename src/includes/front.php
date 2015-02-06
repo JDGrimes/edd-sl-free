@@ -51,18 +51,19 @@ add_filter( 'edd_purchase_download_form', 'edd_sl_free_download_form_filter', 10
  */
 function edd_sl_free_get_latest_version( $data ) {
 
-	// If this is a free item, we shortcircuit. This allows the requests for non-free
-	// items to continue to work normally.
-	if (
-		! isset( $data['item_id'] )
-		|| ! edd_is_free_download( (int) $data['item_id'] )
-	) {
+	if ( ! isset( $data['item_id'] ) ) {
 		return;
 	}
 
 	$item_id = (int) $data['item_id'];
+	$download = edd_get_download( $item_id );
 
-	$download    = get_post( $item_id );
+	// If this is a free item, we shortcircuit. This allows the requests for non-free
+	// items to continue to work normally.
+	if ( ! $download || ! edd_is_free_download( $item_id ) ) {
+		return;
+	}
+
 	$slug        = ! empty( $data['slug'] ) ? sanitize_key( urldecode( $data['slug'] ) ) : $download->post_name;
 	$description = ! empty( $download->post_excerpt ) ? $download->post_excerpt : $download->post_content;
 	$changelog   = get_post_meta( $item_id, '_edd_sl_changelog', true );
