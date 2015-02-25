@@ -5,11 +5,11 @@
  * Plugin URI:  https://github.com/JDGrimes/edd-sl-free
  * Author:      J.D. Grimes
  * Author URI:  http://codesymphony.co/
- * Version:     1.0.0
+ * Version:     1.0.1
  * Description: Easily provide free downloads through the Easy Digital Downloads plugin while still using the Software Licensing extension.
  *
  * @package EDD_SL_Free
- * @version 1.0.0
+ * @version 1.0.1
  * @author  J.D. Grimes <jdg@codesymphony.co>
  */
 
@@ -61,7 +61,7 @@ function edd_sl_free_get_download_package_url( $download_id ) {
 /**
  * Supply the list of HTML tags allowed in a module changelog.
  *
- * @since 1.1.0
+ * @since 1.0.1
  *
  * @WordPress\filter wp_kses_allowed_html
  */
