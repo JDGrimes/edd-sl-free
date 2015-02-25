@@ -58,4 +58,42 @@ function edd_sl_free_get_download_package_url( $download_id ) {
 	return apply_filters( 'edd_sl_download_package_url', $file_url, $download_id );
 }
 
+/**
+ * Supply the list of HTML tags allowed in a module changelog.
+ *
+ * @since 1.1.0
+ *
+ * @WordPress\filter wp_kses_allowed_html
+ */
+function edd_sl_free_changelog_allowed_html( $allowed_tags, $context ) {
+
+	if ( 'edd_sl_changelog' !== $context ) {
+		return $allowed_tags;
+	}
+
+	return array(
+		'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ),
+		'abbr' => array( 'title' => array() ),
+		'acronym' => array( 'title' => array() ),
+		'code' => array(),
+		'pre' => array(),
+		'em' => array(),
+		'strong' => array(),
+		'div' => array( 'class' => array() ),
+		'span' => array( 'class' => array() ),
+		'p' => array(),
+		'ul' => array(),
+		'ol' => array(),
+		'li' => array(),
+		'h1' => array(),
+		'h2' => array(),
+		'h3' => array(),
+		'h4' => array(),
+		'h5' => array(),
+		'h6' => array(),
+		'img' => array( 'src' => array(), 'class' => array(), 'alt' => array() ),
+	);
+}
+add_filter( 'wp_kses_allowed_html', 'edd_sl_free_changelog_allowed_html', 10, 2 );
+
 // EOF
