@@ -32,7 +32,7 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	 */
 	public function tearDown() {
 
-		remove_filter( 'wp_die_handler', array( $this, 'get_die_handler' ), 1, 1 );
+		remove_filter( 'wp_die_handler', array( $this, 'get_die_handler' ), 1 );
 
 		parent::tearDown();
 	}
@@ -57,6 +57,13 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 			$download_id
 			, 'edd_download_files'
 			, array( array( 'file' => '/test/file.zip' ) )
+		);
+
+		add_post_meta( $download_id, '_edd_sl_beta_upgrade_file_key', 0 );
+		add_post_meta(
+			$download_id
+			, '_edd_sl_beta_files'
+			, array( array( 'file' => '/test/beta.zip' ) )
 		);
 
 		return $download_id;
@@ -219,6 +226,130 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the response contains the stable version number.
+	 *
+	 * @since 1.1.0
+	 */
+	public function test_response_includes_stable_version() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+
+		$response = $this->simulate_request( array( 'item_id' => $item_id ) );
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'stable_version', $response );
+		$this->assertEquals( '2.0.0', $response['stable_version'] );
+	}
+
+	/**
+	 * Test that the response contains a new version number.
+	 *
+	 * @since 1.0.0
+	 */
+	public function test_response_includes_new_version_beta() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
+
+		$response = $this->simulate_request(
+			array( 'item_id' => $item_id, 'beta' => 1 )
+		);
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'new_version', $response );
+		$this->assertEquals( '2.1.0-beta', $response['new_version'] );
+	}
+
+	/**
+	 * Test that the response contains a new version number.
+	 *
+	 * @since 1.0.0
+	 */
+	public function test_response_includes_new_version_beta_disabled() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', false );
+
+		$response = $this->simulate_request(
+			array( 'item_id' => $item_id, 'beta' => 1 )
+		);
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'new_version', $response );
+		$this->assertEquals( '2.0.0', $response['new_version'] );
+	}
+
+	/**
+	 * Test that the response contains a new version number.
+	 *
+	 * @since 1.0.0
+	 */
+	public function test_response_includes_new_version_beta_not_requested() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
+
+		$response = $this->simulate_request( array( 'item_id' => $item_id ) );
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'new_version', $response );
+		$this->assertEquals( '2.0.0', $response['new_version'] );
+	}
+
+	/**
+	 * Test that the response contains a new version number.
+	 *
+	 * @since 1.0.0
+	 */
+	public function test_response_includes_new_version_beta_older() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.0.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
+
+		$response = $this->simulate_request(
+			array( 'item_id' => $item_id, 'beta' => 1 )
+		);
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'new_version', $response );
+		$this->assertEquals( '2.0.0', $response['new_version'] );
+	}
+
+	/**
+	 * Test that the response contains the stable version number.
+	 *
+	 * @since 1.1.0
+	 */
+	public function test_response_includes_stable_version_beta() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
+
+		$response = $this->simulate_request( array( 'item_id' => $item_id ) );
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'stable_version', $response );
+		$this->assertEquals( '2.0.0', $response['stable_version'] );
+	}
+
+	/**
 	 * Test that the response includes the download name.
 	 *
 	 * @since 1.0.0
@@ -253,6 +384,24 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 		$this->assertEquals(
 			add_query_arg( 'changelog', '1', get_permalink( $item_id ) )
 			, $response['url']
+		);
+	}
+
+	/**
+	 * Test that the response contains the last updated time.
+	 *
+	 * @since 1.1.0
+	 */
+	public function test_response_includes_last_updated_time() {
+
+		$item_id  = $this->create_download();
+		$response = $this->simulate_request( array( 'item_id' => $item_id ) );
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'last_updated', $response );
+		$this->assertEquals(
+			get_post( $item_id )->post_modified
+			, $response['last_updated']
 		);
 	}
 
@@ -293,6 +442,32 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the response contains the download URL.
+	 *
+	 * @since 1.1.0
+	 */
+	public function test_response_includes_download_url_beta() {
+
+		$item_id  = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
+
+		$response = $this->simulate_request(
+			array( 'item_id' => $item_id, 'beta' => 1 )
+		);
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'package', $response );
+		$this->assertEquals( '/test/beta.zip', $response['package'] );
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'download_link', $response );
+		$this->assertEquals( '/test/beta.zip', $response['download_link'] );
+	}
+
+	/**
 	 * Test that the response contains the description and changelog sections.
 	 *
 	 * @since 1.0.0
@@ -325,6 +500,37 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the response contains the description and changelog sections.
+	 *
+	 * @since 1.1.0
+	 */
+	public function test_response_includes_sections_changelog_beta() {
+
+		$item_id = $this->create_download(
+			array( 'post_content' => 'Download description', 'post_excerpt' => '' )
+		);
+
+		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
+		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
+		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
+		add_post_meta( $item_id, '_edd_sl_changelog', 'Download changelog' );
+		add_post_meta( $item_id, '_edd_sl_beta_changelog', 'Download beta changelog' );
+
+		$response = $this->simulate_request(
+			array( 'item_id' => $item_id, 'beta' => 1 )
+		);
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'sections', $response );
+
+		$sections = unserialize( $response['sections'] );
+
+		$this->assertInternalType( 'array', $sections );
+		$this->assertArrayHasKey( 'changelog', $sections );
+		$this->assertEquals( "<p>Download beta changelog</p>\n", $sections['changelog'] );
+	}
+
+	/**
 	 * Test that the description section uses the excerpt if available.
 	 *
 	 * @since 1.0.0
@@ -345,6 +551,34 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 		$this->assertInternalType( 'array', $sections );
 		$this->assertArrayHasKey( 'description', $sections );
 		$this->assertEquals( "<p>Download excerpt</p>\n", $sections['description'] );
+	}
+
+	/**
+	 * Test that the response contains the description and changelog sections.
+	 *
+	 * @since 1.1.0
+	 */
+	public function test_response_includes_banners() {
+
+		$item_id = $this->create_download();
+
+		add_post_meta( $item_id, '_edd_readme_plugin_banner_high', 'high.png' );
+		add_post_meta( $item_id, '_edd_readme_plugin_banner_low', 'low.png' );
+
+		$response = $this->simulate_request( array( 'item_id' => $item_id ) );
+
+		$this->assertInternalType( 'array', $response );
+		$this->assertArrayHasKey( 'banners', $response );
+
+		$banners = unserialize( $response['banners'] );
+
+		$this->assertInternalType( 'array', $banners );
+		$this->assertArrayHasKey( 'high', $banners );
+		$this->assertEquals( 'high.png', $banners['high'] );
+
+		$this->assertInternalType( 'array', $banners );
+		$this->assertArrayHasKey( 'low', $banners );
+		$this->assertEquals( 'low.png', $banners['low'] );
 	}
 }
 

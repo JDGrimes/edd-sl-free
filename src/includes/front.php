@@ -67,23 +67,53 @@ function edd_sl_free_get_latest_version( $data ) {
 	$slug        = ! empty( $data['slug'] ) ? sanitize_key( urldecode( $data['slug'] ) ) : $download->post_name;
 	$description = ! empty( $download->post_excerpt ) ? $download->post_excerpt : $download->post_content;
 	$changelog   = get_post_meta( $item_id, '_edd_sl_changelog', true );
-	$package_url = edd_sl_free_get_download_package_url( $item_id );
+	$beta        = ! empty( $data['beta'] );
+
+	$stable_version = edd_software_licensing()->get_latest_version( $download->ID );
+
+	$version = $stable_version;
+
+	$download_beta = false;
+
+	if (
+		$beta
+		&& (bool) get_post_meta( $item_id, '_edd_sl_beta_enabled', true )
+	) {
+
+		$version_beta = edd_software_licensing()->get_beta_download_version( $item_id );
+
+		if ( version_compare( $version_beta, $stable_version, '>') ) {
+			$changelog     = get_post_meta( $item_id, '_edd_sl_beta_changelog', true );
+			$version       = $version_beta;
+			$download_beta = true;
+		}
+	}
+
+	$package_url = edd_sl_free_get_download_package_url( $item_id, $download_beta );
 
 	$response = array(
-		'new_version'   => edd_software_licensing()->get_latest_version( $download->ID ),
-		'name'          => $download->post_title,
-		'slug'          => $slug,
-		'url'           => add_query_arg( 'changelog', '1', get_permalink( $item_id ) ),
-		'homepage'      => get_permalink( $item_id ),
-		'package'       => $package_url,
-		'download_link' => $package_url,
-		'sections'      => serialize(
+		'new_version'    => $version,
+		'stable_version' => $stable_version,
+		'name'           => $download->post_title,
+		'slug'           => $slug,
+		'url'            => add_query_arg( 'changelog', '1', get_permalink( $item_id ) ),
+		'last_updated'   => $download->post_modified,
+		'homepage'       => get_permalink( $item_id ),
+		'package'        => $package_url,
+		'download_link'  => $package_url,
+		'sections'       => serialize(
 			array(
 				'description' => wpautop( wp_kses( $description, 'edd_sl_changelog' ) ),
 				'changelog'   => wpautop( wp_kses( stripslashes( $changelog ), 'edd_sl_changelog' ) ),
 			)
 		),
-		'is_free'       => true,
+		'banners' => serialize(
+			array(
+				'high' => get_post_meta( $item_id, '_edd_readme_plugin_banner_high', true ),
+				'low'  => get_post_meta( $item_id, '_edd_readme_plugin_banner_low', true )
+			)
+		),
+		'is_free'        => true,
 	);
 
 	/**
@@ -91,7 +121,7 @@ function edd_sl_free_get_latest_version( $data ) {
 	 *
 	 * @since 1.0.0
 	 */
-	$response = apply_filters( 'edd_sl_license_response', $response, $download );
+	$response = apply_filters( 'edd_sl_license_response', $response, $download, $download_beta );
 
 	wp_send_json( $response );
 }

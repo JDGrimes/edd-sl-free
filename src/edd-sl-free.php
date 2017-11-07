@@ -27,15 +27,22 @@ if ( ! is_admin() ) {
  * Get the package URL for a download.
  *
  * @since 1.0.0
+ * @since 1.1.0 The $download_beta arg was added.
  *
- * @param int $download_id The ID of the download.
+ * @param int  $download_id   The ID of the download.
+ * @param bool $download_beta Whether to get the URL for the beta version.
  *
  * @return string The download package URL.
  */
-function edd_sl_free_get_download_package_url( $download_id ) {
+function edd_sl_free_get_download_package_url( $download_id, $download_beta = false ) {
 
-	$file_key  = get_post_meta( $download_id, '_edd_sl_upgrade_file_key', true );
-	$all_files = get_post_meta( $download_id, 'edd_download_files', true );
+	if ( $download_beta ) {
+		$file_key  = get_post_meta( $download_id, '_edd_sl_beta_upgrade_file_key', true );
+		$all_files = get_post_meta( $download_id, '_edd_sl_beta_files', true );
+	} else {
+		$file_key  = get_post_meta( $download_id, '_edd_sl_upgrade_file_key', true );
+		$all_files = get_post_meta( $download_id, 'edd_download_files', true );
+	}
 
 	if ( $all_files && is_array( $all_files ) ) {
 		$file_url = $all_files[ $file_key ]['file'];
