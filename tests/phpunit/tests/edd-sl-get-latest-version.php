@@ -257,7 +257,10 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
 
 		$response = $this->simulate_request(
-			array( 'item_id' => $item_id, 'beta' => 1 )
+			array(
+				'item_id' => $item_id,
+				'beta'    => 1,
+			)
 		);
 
 		$this->assertInternalType( 'array', $response );
@@ -279,7 +282,10 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 		add_post_meta( $item_id, '_edd_sl_beta_enabled', false );
 
 		$response = $this->simulate_request(
-			array( 'item_id' => $item_id, 'beta' => 1 )
+			array(
+				'item_id' => $item_id,
+				'beta'    => 1,
+			)
 		);
 
 		$this->assertInternalType( 'array', $response );
@@ -321,7 +327,10 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
 
 		$response = $this->simulate_request(
-			array( 'item_id' => $item_id, 'beta' => 1 )
+			array(
+				'item_id' => $item_id,
+				'beta'    => 1,
+			)
 		);
 
 		$this->assertInternalType( 'array', $response );
@@ -448,14 +457,17 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	 */
 	public function test_response_includes_download_url_beta() {
 
-		$item_id  = $this->create_download();
+		$item_id = $this->create_download();
 
 		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
 		add_post_meta( $item_id, '_edd_sl_beta_version', '2.1.0-beta' );
 		add_post_meta( $item_id, '_edd_sl_beta_enabled', true );
 
 		$response = $this->simulate_request(
-			array( 'item_id' => $item_id, 'beta' => 1 )
+			array(
+				'item_id' => $item_id,
+				'beta'    => 1,
+			)
 		);
 
 		$this->assertInternalType( 'array', $response );
@@ -475,7 +487,10 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	public function test_response_includes_sections() {
 
 		$item_id = $this->create_download(
-			array( 'post_content' => 'Download description', 'post_excerpt' => '' )
+			array(
+				'post_content' => 'Download description',
+				'post_excerpt' => '',
+			)
 		);
 
 		add_post_meta( $item_id, '_edd_sl_changelog', 'Download changelog' );
@@ -507,7 +522,10 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 	public function test_response_includes_sections_changelog_beta() {
 
 		$item_id = $this->create_download(
-			array( 'post_content' => 'Download description', 'post_excerpt' => '' )
+			array(
+				'post_content' => 'Download description',
+				'post_excerpt' => '',
+			)
 		);
 
 		add_post_meta( $item_id, '_edd_sl_version', '2.0.0' );
@@ -517,7 +535,10 @@ class EDD_SL_Get_Latest_Version_Test extends WP_UnitTestCase {
 		add_post_meta( $item_id, '_edd_sl_beta_changelog', 'Download beta changelog' );
 
 		$response = $this->simulate_request(
-			array( 'item_id' => $item_id, 'beta' => 1 )
+			array(
+				'item_id' => $item_id,
+				'beta'    => 1,
+			)
 		);
 
 		$this->assertInternalType( 'array', $response );

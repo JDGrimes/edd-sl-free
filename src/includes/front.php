@@ -55,7 +55,7 @@ function edd_sl_free_get_latest_version( $data ) {
 		return;
 	}
 
-	$item_id = (int) $data['item_id'];
+	$item_id  = (int) $data['item_id'];
 	$download = edd_get_download( $item_id );
 
 	// If this is a free item, we shortcircuit. This allows the requests for non-free
@@ -82,7 +82,7 @@ function edd_sl_free_get_latest_version( $data ) {
 
 		$version_beta = edd_software_licensing()->get_beta_download_version( $item_id );
 
-		if ( version_compare( $version_beta, $stable_version, '>') ) {
+		if ( version_compare( $version_beta, $stable_version, '>' ) ) {
 			$changelog     = get_post_meta( $item_id, '_edd_sl_beta_changelog', true );
 			$version       = $version_beta;
 			$download_beta = true;
@@ -107,10 +107,10 @@ function edd_sl_free_get_latest_version( $data ) {
 				'changelog'   => wpautop( wp_kses( stripslashes( $changelog ), 'edd_sl_changelog' ) ),
 			)
 		),
-		'banners' => serialize(
+		'banners'        => serialize(
 			array(
 				'high' => get_post_meta( $item_id, '_edd_readme_plugin_banner_high', true ),
-				'low'  => get_post_meta( $item_id, '_edd_readme_plugin_banner_low', true )
+				'low'  => get_post_meta( $item_id, '_edd_readme_plugin_banner_low', true ),
 			)
 		),
 		'is_free'        => true,

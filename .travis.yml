@@ -34,7 +34,7 @@ script:
     - find . -name '*.php' -exec php -lf {} \;
     - >
       if [[ $TRAVIS_PHP_VERSION == 5.4 ]]; then
-        /tmp/phpcs/bin/phpcs -ns --standard=phpcs.ruleset.xml --extensions=php .
+        /tmp/phpcs/bin/phpcs -s --standard=phpcs.ruleset.xml --extensions=php .
       else
         echo 'Not running PHPCS.'
       fi

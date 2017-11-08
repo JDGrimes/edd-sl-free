@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
 <ruleset>
-	<rule ref="WordPress-VIP" />
+	<rule ref="WordPress-VIP">
+		<exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
+		<exclude name="Generic.Functions.FunctionCallArgumentSpacing.SpaceBeforeComma" />
+	</rule>
 
 	<rule ref="WordPress.XSS.EscapeOutput">
 		<exclude-pattern>/tests/*</exclude-pattern>
 	</rule>
 
-	<rule ref="PSR2.ControlStructures.ElseIfDeclaration" />
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
 </ruleset>
