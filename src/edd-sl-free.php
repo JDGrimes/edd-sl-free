@@ -4,12 +4,12 @@
  * Plugin Name: EDD SL Free
  * Plugin URI:  https://github.com/JDGrimes/edd-sl-free
  * Author:      J.D. Grimes
- * Author URI:  http://codesymphony.co/
- * Version:     1.0.1
+ * Author URI:  https://codesymphony.co/
+ * Version:     1.1.0
  * Description: Easily provide free downloads through the Easy Digital Downloads plugin while still using the Software Licensing extension.
  *
  * @package EDD_SL_Free
- * @version 1.0.1
+ * @version 1.1.0
  * @author  J.D. Grimes <jdg@codesymphony.co>
  */
 
