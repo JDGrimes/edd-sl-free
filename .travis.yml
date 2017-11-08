@@ -27,14 +27,14 @@ before_install:
         mkdir -p /tmp/wpcs
         curl -L "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/archive/develop.tar.gz" \
           | tar xvz --strip-components=1 -C /tmp/wpcs
-        /tmp/phpcs/scripts/phpcs --config-set installed_paths /tmp/wpcs
+        /tmp/phpcs/bin/phpcs --config-set installed_paths /tmp/wpcs
       fi
 
 script:
     - find . -name '*.php' -exec php -lf {} \;
     - >
       if [[ $TRAVIS_PHP_VERSION == 5.4 ]]; then
-        /tmp/phpcs/scripts/phpcs -ns --standard=phpcs.ruleset.xml $(find . -name '*.php')
+        /tmp/phpcs/bin/phpcs -ns --standard=phpcs.ruleset.xml --extensions=php .
       else
         echo 'Not running PHPCS.'
       fi
